@@ -795,8 +795,8 @@ function updatePlayer(dt) {
   if (keys['e'] || keys['E']) { fx -= sin; fy += cos; }
 
   // Touch joystick
-  fx += joystick.moveX * cos + joystick.moveY * sin;
-  fy += joystick.moveX * sin - joystick.moveY * cos;
+  fx += -joystick.moveY * cos + joystick.moveX * sin;
+  fy += -joystick.moveY * sin - joystick.moveX * cos;
 
   if (fx !== 0 || fy !== 0) {
     const spd = MOVE_SPEED * dt;
