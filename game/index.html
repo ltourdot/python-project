@@ -146,6 +146,8 @@
     align-items: center;
     justify-content: center;
     z-index: 100;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
   #overlay h1 { font-size: 36px; color: #f44; letter-spacing: 4px; margin-bottom: 8px; text-shadow: 0 0 20px #f00; }
   #overlay p  { color: #aaa; margin: 4px; font-size: 14px; }
@@ -481,8 +483,12 @@ canvas.width = W; canvas.height = H;
 // Scale canvas for display
 function resizeCanvas() {
   const aspect = W / H;
-  const maxW = Math.min(window.innerWidth, 800);
-  const maxH = window.innerHeight - 90;
+  const vp = window.visualViewport;
+  const vw = vp ? vp.width  : window.innerWidth;
+  const vh = vp ? vp.height : window.innerHeight;
+  const hudH = document.getElementById('hud').offsetHeight || 48;
+  const maxW = Math.min(vw, 800);
+  const maxH = vh - hudH - 4;
   let dw = maxW, dh = maxW / aspect;
   if (dh > maxH) { dh = maxH; dw = dh * aspect; }
   canvas.style.width  = dw + 'px';
@@ -1017,12 +1023,12 @@ function loop(ts) {
 // ─── START ───────────────────────────────────────────────────────────────────
 const overlay = document.getElementById('overlay');
 overlay.addEventListener('click', startGame);
-overlay.addEventListener('touchend', e => { e.preventDefault(); startGame(); }, {passive:false});
+overlay.addEventListener('touchstart', e => { e.preventDefault(); startGame(); }, {passive:false});
 
 function startGame() {
   if (running) return;
   overlay.style.display = 'none';
-  canvas.requestPointerLock?.();
+  try { canvas.requestPointerLock?.(); } catch(e) {}
   running = true;
   lastTime = performance.now();
   updateHUD();
